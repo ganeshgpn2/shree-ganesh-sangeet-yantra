@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="ne">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#173d63"><title>श्री गणेश संगीत यन्त्र V8</title>
+<style>
+:root{--brand:#245b87;--bg:#f3f6fa;--card:#fff;--text:#17212b;--muted:#657487;--line:#dce3eb;--accent:#e0a32b}
+[data-theme=dark]{--bg:#101820;--card:#1a2733;--text:#edf3f8;--muted:#a8b6c5;--line:#344454;--brand:#286b9f}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px system-ui,"Noto Sans Devanagari",sans-serif}
+header{background:var(--brand);color:white;padding:12px 14px;position:sticky;top:0;z-index:4;box-shadow:0 2px 8px #0002}
+.head{display:flex;align-items:center;gap:12px}.head h1{font-size:18px;margin:0}.head small{opacity:.85}
+nav{display:flex;overflow:auto;gap:7px;padding:10px;background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:61px;z-index:3}
+button,.tab{border:0;border-radius:10px;padding:10px 13px;background:var(--brand);color:white;font:inherit;cursor:pointer}
+button.secondary{background:var(--line);color:var(--text)}button.danger{background:#b83232}button:disabled{opacity:.45}
+nav button{white-space:nowrap;background:var(--line);color:var(--text)}nav button.active{background:var(--brand);color:white}
+main{max-width:1100px;margin:auto;padding:14px;padding-bottom:150px}.page{display:none}.page.active{display:block}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin:10px 0}
+.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.grow{flex:1;min-width:0}
+input,select{font:inherit;padding:10px;border:1px solid var(--line);border-radius:9px;background:var(--bg);color:var(--text);max-width:100%}
+input[type=text],input[type=url],input[type=search],input[type=time],input[type=number],select{width:100%}
+label{display:block;color:var(--muted);font-size:13px;margin:8px 0}label input,label select{display:block;margin-top:5px}
+.listitem{display:flex;gap:10px;align-items:center;padding:10px;border-bottom:1px solid var(--line)}.listitem:last-child{border:0}
+.listitem .meta{flex:1;min-width:0}.meta b{display:block;overflow-wrap:anywhere}.meta small{color:var(--muted)}
+.mini{padding:6px 9px;font-size:13px}.cover{width:100%;max-width:270px;aspect-ratio:1;margin:12px auto;border-radius:18px;background:linear-gradient(145deg,#163b60,#387ba8);display:grid;place-items:center;color:white;font-size:78px}
+#seek{width:100%}.player{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--line);padding:10px 14px calc(10px + env(safe-area-inset-bottom));z-index:5;box-shadow:0 -3px 14px #0001}
+.player .row{max-width:1100px;margin:auto}.controls{display:flex;gap:8px;align-items:center;justify-content:center}.controls button{border-radius:50%;width:44px;height:44px;padding:0;font-size:19px}
+#status{font-size:12px;color:var(--muted);text-align:center;margin-top:4px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px}
+.muted{color:var(--muted);font-size:13px}.notice{padding:11px;border-radius:10px;background:#fff4d8;color:#62470b;font-size:13px}
+progress{width:100%}#video{width:100%;max-height:55vh;background:#000}
+@media(max-width:560px){main{padding:9px;padding-bottom:160px}.head h1{font-size:16px}.player{padding-left:8px;padding-right:8px}}
+</style></head>
+<body>
+<header><div class="head"><div style="font-size:28px">🎵</div><div><h1>श्री गणेश संगीत यन्त्र</h1><small>Music · Radio · TV · Alarm</small></div><div class="grow"></div><button class="secondary mini" id="themeBtn">◐</button></div></header>
+<nav>
+<button class="active" data-page="music">♫ संगीत</button><button data-page="radio">📻 रेडियो</button><button data-page="videoPage">📺 भिडियो</button><button data-page="alarm">⏰ Alarm</button><button data-page="tools">⚙ सेटिङ</button>
+</nav>
+<main>
+<section class="page active" id="music">
+ <div class="card"><div class="row"><div class="grow"><b>Device का गीतहरू</b><div class="muted" id="fileCount">अहिलेसम्म फाइल छानिएको छैन</div></div><button id="pickAudio">फाइल छान्नुहोस्</button><button class="secondary" id="pickFolder">फोल्डर छान्नुहोस्</button></div>
+ <label>गीत खोज्नुहोस्<input type="search" id="musicSearch" placeholder="गीतको नाम लेख्नुहोस्"></label></div>
+ <div class="card"><div class="row"><b class="grow">गीत सूची</b><button class="secondary mini" id="makePlaylist">छानिएका गीतबाट Playlist</button></div><div id="musicList" class="muted">गीत सूची खाली छ।</div></div>
+ <div class="card"><b>Playlist</b><div id="playlistList" class="muted">Playlist बनाइएको छैन।</div></div>
+</section>
+<section class="page" id="radio">
+ <div class="card"><b>रेडियो स्टेशन थप्नुहोस्</b><div class="grid">
+ <label>नाम<input id="radioName" type="text" placeholder="रेडियोको नाम"></label><label>Stream URL<input id="radioUrl" type="url" placeholder="https://..."></label><label>समूह<input id="radioCat" type="text" placeholder="समाचार / संगीत"></label></div>
+ <button id="addRadio">रेडियो थप्नुहोस्</button></div>
+ <div class="card"><label>रेडियो खोज्नुहोस्<input id="radioSearch" type="search"></label><div id="radioList"></div></div>
+</section>
+<section class="page" id="videoPage">
+ <div class="card"><div class="row"><b class="grow">भिडियो फाइल / IPTV</b><button id="pickVideo">भिडियो छान्नुहोस्</button></div><label>भिडियो URL<input id="videoUrl" type="url" placeholder="https://...mp4 वा .m3u8"></label><button id="playVideoUrl">URL चलाउनुहोस्</button><video id="video" controls playsinline></video><p class="muted" id="videoStatus">Browser-supported format मात्र चल्छ।</p></div>
+ <div class="card"><b>भिडियो सूची</b><div id="videoList"></div></div>
+</section>
+<section class="page" id="alarm">
+ <div class="notice">महत्त्वपूर्ण: यो HTML संस्करणमा Alarm चल्नका लागि एप/ब्राउजर खुला र सक्रिय रहनुपर्छ। फोन बन्द, Browser बन्द वा Android ले एपलाई रोक्दा Alarm बज्ने सुनिश्चित हुँदैन। वास्तविक Background Alarm का लागि Native Android सेवा आवश्यक हुन्छ।</div>
+ <div class="card"><b>नयाँ Alarm</b><div class="grid"><label>समय<input id="alarmTime" type="time" value="06:00"></label><label>गीत/रेडियो<select id="alarmSource"><option value="last">हालको गीत</option><option value="radio">हालको रेडियो</option></select></label><label>बज्ने अवधि (मिनेट)<input id="alarmDuration" type="number" min="1" placeholder="जस्तै 30"></label></div><button id="addAlarm">Alarm सेभ गर्नुहोस्</button></div>
+ <div class="card"><b>सेट गरिएका Alarm</b><div id="alarmList"></div></div>
+ <div class="card"><b>Sleep Timer</b><div class="row"><input id="sleepMinutes" type="number" min="1" placeholder="मिनेट"><button id="sleepStart">Timer सुरु</button><button class="secondary" id="sleepCancel">रद्द</button></div><div id="sleepStatus" class="muted"></div></div>
+</section>
+<section class="page" id="tools">
+ <div class="card"><b>Equalizer (हालको Device गीतमा)</b><div id="eqControls" class="grid"></div><button class="secondary" id="eqReset">Reset</button><p class="muted">Equalizer रेडियो/भिडियोमा लागू हुँदैन।</p></div>
+ <div class="card"><b>Backup तथा Restore</b><p class="muted">रेडियो, Playlist र Alarm सेटिङको JSON Backup बनाउनुहोस्। गीत/भिडियो फाइलहरू Backup मा समावेश हुँदैनन्।</p><div class="row"><button id="exportData">Backup डाउनलोड</button><button class="secondary" id="importData">Backup Restore</button><input hidden type="file" id="backupFile" accept="application/json"></div></div>
+ <div class="card"><b>Display</b><div class="row"><button id="lightMode" class="secondary">Light</button><button id="darkMode" class="secondary">Dark</button></div></div>
+ <div class="card"><b>प्रणाली जानकारी</b><p class="muted">यो HTML आधारित वेब एपको प्रारम्भिक V8 संरचना हो। Installable PWA का लागि Hosting, manifest र service worker थप्नुपर्छ।</p></div>
+</section>
+</main>
+<div class="player">
+ <div class="row"><div class="grow"><b id="nowTitle">कुनै गीत बजिरहेको छैन</b><div class="muted" id="nowSub">श्री गणेश संगीत यन्त्र</div></div><button class="secondary mini" id="stopBtn">Stop</button></div>
+ <input type="range" id="seek" min="0" max="1000" value="0">
+ <div class="row"><small id="elapsed">0:00</small><div class="grow"></div><small id="duration">0:00</small></div>
+ <div class="controls"><button class="secondary" id="prevBtn">⏮</button><button id="playBtn">▶</button><button class="secondary" id="nextBtn">⏭</button><button class="secondary" id="shuffleBtn">🔀</button></div><div id="status">तयार</div>
+</div>
+<input hidden id="audioInput" type="file" accept="audio/*,.mp3,.m4a,.wav,.ogg,.flac,.aac" multiple>
+<input hidden id="folderInput" type="file" webkitdirectory multiple>
+<input hidden id="videoInput" type="file" accept="video/*,.mkv,.avi,.mov,.3gp" multiple>
+<audio id="audio" preload="metadata"></audio>
+<script>
+(()=>{'use strict';
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const audio=$('#audio'), video=$('#video');
+let tracks=[],videos=[],stations=[],queue=[],index=-1,kind='audio',shuffle=false,alarms=[],sleepAt=0,sleepTicker=null,alarmTicker=null,ctx=null,filters=[],gainNode=null;
+let playlists=[];
+const load=(k,d)=>{try{return JSON.parse(localStorage.getItem('sgv8-'+k))??d}catch{return d}};
+const save=(k,v)=>localStorage.setItem('sgv8-'+k,JSON.stringify(v));
+stations=load('stations',[]);alarms=load('alarms',[]);playlists=load('playlists',[]);
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function toast(s){$('#status').textContent=s}
+function fmt(n){if(!Number.isFinite(n))return'0:00';return Math.floor(n/60)+':'+String(Math.floor(n%60)).padStart(2,'0')}
+function page(id){$$('.page').forEach(x=>x.classList.toggle('active',x.id===id));$$('nav button').forEach(x=>x.classList.toggle('active',x.dataset.page===id))}
+$$('nav button').forEach(b=>b.onclick=()=>page(b.dataset.page));
+$('#themeBtn').onclick=()=>document.documentElement.dataset.theme=document.documentElement.dataset.theme==='dark'?'':'dark';
+$('#darkMode').onclick=()=>document.documentElement.dataset.theme='dark';$('#lightMode').onclick=()=>document.documentElement.dataset.theme='';
+function addFiles(fs){for(const f of fs){const ext=f.name.split('.').pop().toLowerCase();if(f.type.startsWith('audio/')||/^(mp3|m4a|wav|ogg|flac|aac|opus|wma)$/.test(ext)){tracks.push({name:f.name.replace(/\.[^.]+$/,''),file:f,url:URL.createObjectURL(f),id:crypto.randomUUID()})}else if(f.type.startsWith('video/')||/^(mp4|mkv|webm|mov|avi|3gp)$/.test(ext)){videos.push({name:f.name,url:URL.createObjectURL(f),file:f,id:crypto.randomUUID()})}}
+ renderTracks();renderVideos();$('#fileCount').textContent=tracks.length+' गीत · '+videos.length+' भिडियो';}
+$('#pickAudio').onclick=()=>$('#audioInput').click();$('#pickFolder').onclick=()=>$('#folderInput').click();$('#pickVideo').onclick=()=>$('#videoInput').click();
+$('#audioInput').onchange=e=>addFiles(e.target.files);$('#folderInput').onchange=e=>addFiles(e.target.files);$('#videoInput').onchange=e=>addFiles(e.target.files);
+function renderTracks(){const q=$('#musicSearch').value.toLowerCase();$('#musicList').innerHTML=tracks.filter(t=>t.name.toLowerCase().includes(q)).map(t=>`<div class="listitem"><div class="meta"><b>${esc(t.name)}</b><small>Device Audio</small></div><button class="mini" data-play="${t.id}">▶</button><button class="mini secondary" data-queue="${t.id}">＋</button></div>`).join('')||'गीत सूची खाली छ।'}
+$('#musicSearch').oninput=renderTracks;
+$('#musicList').onclick=e=>{const id=e.target.dataset.play||e.target.dataset.queue;if(!id)return;const i=tracks.findIndex(t=>t.id===id);if(e.target.dataset.play)playQueue(tracks,i);else{queue.push(tracks[i]);toast('Queue मा थपियो')}};
+function playQueue(list,i){queue=list.slice();index=i;kind='audio';playCurrent()}
+async function playCurrent(){if(index<0||!queue[index])return;const t=queue[index];kind=t.url.startsWith('blob:')?'audio':kind;video.pause();audio.src=t.url;$('#nowTitle').textContent=t.name;$('#nowSub').textContent=kind==='radio'?'Live Radio':'Device Audio';try{await audio.play();toast('बजिरहेको छ')}catch(e){toast('Play हुन सकेन: '+e.message)}}
+$('#playBtn').onclick=()=>{if(kind==='radio'){if(audio.paused)audio.play().catch(()=>{});else audio.pause()}else if(!audio.src&&queue.length){playCurrent()}else if(audio.paused)audio.play().catch(()=>{});else audio.pause()};
+$('#stopBtn').onclick=()=>{audio.pause();audio.currentTime=0;toast('बन्द भयो')};
+function step(d){if(!queue.length)return;index=shuffle?Math.floor(Math.random()*queue.length):(index+d+queue.length)%queue.length;playCurrent()}
+$('#prevBtn').onclick=()=>step(-1);$('#nextBtn').onclick=()=>step(1);$('#shuffleBtn').onclick=()=>{shuffle=!shuffle;toast(shuffle?'Shuffle चालु':'Shuffle बन्द')};
+audio.onplay=()=>$('#playBtn').textContent='Ⅱ';audio.onpause=()=>$('#playBtn').textContent='▶';
+audio.ontimeupdate=()=>{$('#elapsed').textContent=fmt(audio.currentTime);$('#duration').textContent=fmt(audio.duration);if(Number.isFinite(audio.duration))$('#seek').value=audio.currentTime/audio.duration*1000};
+audio.onended=()=>step(1);$('#seek').oninput=e=>{if(Number.isFinite(audio.duration))audio.currentTime=e.target.value/1000*audio.duration};
+function renderRadios(){const q=$('#radioSearch').value.toLowerCase();$('#radioList').innerHTML=stations.filter(s=>(s.name+s.cat).toLowerCase().includes(q)).map(s=>`<div class="listitem"><div class="meta"><b>${esc(s.name)}</b><small>${esc(s.cat)}</small></div><button class="mini" data-stplay="${s.id}">▶</button><button class="mini secondary" data-stdel="${s.id}">✕</button></div>`).join('')||'<p class="muted">रेडियो थपिएको छैन।</p>'}
+$('#radioSearch').oninput=renderRadios;
+$('#addRadio').onclick=()=>{const name=$('#radioName').value.trim(),url=$('#radioUrl').value.trim(),cat=$('#radioCat').value.trim()||'अन्य';if(!name||!/^https?:\/\//i.test(url)){toast('नाम र मान्य http/https URL राख्नुहोस्');return}stations.push({id:crypto.randomUUID(),name,url,cat});save('stations',stations);$('#radioName').value=$('#radioUrl').value='';renderRadios();toast('रेडियो थपियो')};
+$('#radioList').onclick=async e=>{const id=e.target.dataset.stplay||e.target.dataset.stdel;if(!id)return;const st=stations.find(x=>x.id===id);if(e.target.dataset.stdel){stations=stations.filter(x=>x.id!==id);save('stations',stations);renderRadios();return}kind='radio';queue=[{name:st.name,url:st.url}];index=0;audio.src=st.url;$('#nowTitle').textContent=st.name;$('#nowSub').textContent='Live Radio · '+st.cat;try{await audio.play();toast('रेडियो बजिरहेको छ')}catch(err){toast('रेडियो चल्न सकेन; URL, CORS वा Server जाँच्नुहोस्')}};
+function renderVideos(){$('#videoList').innerHTML=videos.map(v=>`<div class="listitem"><div class="meta"><b>${esc(v.name)}</b></div><button class="mini" data-vplay="${v.id}">▶</button></div>`).join('')||'भिडियो फाइल छान्नुहोस्।'}
+$('#videoList').onclick=e=>{const v=videos.find(x=>x.id===e.target.dataset.vplay);if(!v)return;video.src=v.url;video.play().catch(()=>$('#videoStatus').textContent='यो भिडियोको Codec Browser मा समर्थित नहुन सक्छ।')};
+$('#playVideoUrl').onclick=()=>{const u=$('#videoUrl').value.trim();if(!/^https?:\/\//i.test(u)){toast('मान्य भिडियो URL राख्नुहोस्');return}video.src=u;video.play().catch(()=>$('#videoStatus').textContent='URL, CORS वा भिडियो Codec समस्या हुन सक्छ।')};
+$('#makePlaylist').onclick=()=>{if(!tracks.length){toast('पहिले गीत छान्नुहोस्');return}const name=prompt('Playlist को नाम');if(!name)return;playlists.push({name,ids:tracks.map(t=>t.id)});save('playlists',playlists);renderPlaylists()};
+function renderPlaylists(){$('#playlistList').innerHTML=playlists.map((p,i)=>`<div class="listitem"><div class="meta"><b>${esc(p.name)}</b><small>${p.ids.length} गीत</small></div><button class="mini" data-pl="${i}">▶</button><button class="mini secondary" data-pldel="${i}">✕</button></div>`).join('')||'Playlist बनाइएको छैन।'}
+$('#playlistList').onclick=e=>{if(e.target.dataset.pl!==undefined){const p=playlists[+e.target.dataset.pl],list=p.ids.map(id=>tracks.find(t=>t.id===id)).filter(Boolean);if(list.length)playQueue(list,0);else toast('यो Playlist का फाइल पुनः छान्नुहोस्')}if(e.target.dataset.pldel!==undefined){playlists.splice(+e.target.dataset.pldel,1);save('playlists',playlists);renderPlaylists()}};
+function renderAlarms(){$('#alarmList').innerHTML=alarms.map((a,i)=>`<div class="listitem"><div class="meta"><b>${a.time}</b><small>${a.enabled?'चालु':'बन्द'} · ${a.duration||'असीमित'} मिनेट</small></div><button class="mini secondary" data-toggle="${i}">${a.enabled?'बन्द':'चालु'}</button><button class="mini danger" data-adel="${i}">मेटाउने</button></div>`).join('')||'Alarm छैन।'}
+$('#addAlarm').onclick=()=>{const time=$('#alarmTime').value;if(!time){toast('समय छान्नुहोस्');return}alarms.push({time,source:$('#alarmSource').value,duration:+$('#alarmDuration').value||0,enabled:true,last:''});save('alarms',alarms);renderAlarms();toast('Alarm सेभ भयो')};
+$('#alarmList').onclick=e=>{if(e.target.dataset.toggle!==undefined){const a=alarms[+e.target.dataset.toggle];a.enabled=!a.enabled;a.last='';save('alarms',alarms);renderAlarms()}if(e.target.dataset.adel!==undefined){alarms.splice(+e.target.dataset.adel,1);save('alarms',alarms);renderAlarms()}};
+function fireAlarm(a){if(a.source==='radio'&&kind==='radio'&&!audio.paused){audio.play().catch(()=>{})}else if(queue.length)playCurrent();else{try{const c=new AudioContext(),o=c.createOscillator();o.connect(c.destination);o.frequency.value=880;o.start();setTimeout(()=>{o.stop();c.close()},12000)}catch{}}
+if(a.duration){setTimeout(()=>{audio.pause();video.pause()},a.duration*60000)}alert('⏰ Alarm: '+a.time)}
+setInterval(()=>{const d=new Date(),key=d.toDateString()+' '+d.toTimeString().slice(0,5);alarms.forEach(a=>{if(a.enabled&&a.time===d.toTimeString().slice(0,5)&&a.last!==key){a.last=key;save('alarms',alarms);fireAlarm(a)}})},1000);
+$('#sleepStart').onclick=()=>{const n=+$('#sleepMinutes').value;if(n<1)return toast('मिनेट लेख्नुहोस्');sleepAt=Date.now()+n*60000;clearInterval(sleepTicker);sleepTicker=setInterval(()=>{const left=sleepAt-Date.now();$('#sleepStatus').textContent='बाँकी '+fmt(left/1000);if(left<=0){audio.pause();video.pause();clearInterval(sleepTicker);sleepAt=0;$('#sleepStatus').textContent='Timer पूरा भयो'}},500)};
+$('#sleepCancel').onclick=()=>{sleepAt=0;clearInterval(sleepTicker);$('#sleepStatus').textContent='Timer रद्द भयो'};
+function setupEQ(){const root=$('#eqControls');[60,170,350,1000,3500,10000].forEach((hz,i)=>{root.insertAdjacentHTML('beforeend',`<label>${hz} Hz<input type="range" min="-12" max="12" value="0" data-eq="${i}"></label>`)})}
+function initAudioGraph(){if(ctx)return;ctx=new(window.AudioContext||window.webkitAudioContext)();const src=ctx.createMediaElementSource(audio);let node=src;filters=[];[60,170,350,1000,3500,10000].forEach((hz,i)=>{const f=ctx.createBiquadFilter();f.type='peaking';f.frequency.value=hz;f.Q.value=1;node.connect(f);node=f;filters.push(f)});gainNode=ctx.createGain();node.connect(gainNode);gainNode.connect(ctx.destination)}
+$('#eqControls').oninput=e=>{if(e.target.dataset.eq===undefined)return;try{initAudioGraph();if(ctx.state==='suspended')ctx.resume();filters[+e.target.dataset.eq].gain.value=+e.target.value}catch(err){toast('Equalizer उपलब्ध भएन')}};
+$('#eqReset').onclick=()=>{$$('#eqControls input').forEach(x=>x.value=0);filters.forEach(f=>f.gain.value=0)};
+$('#exportData').onclick=()=>{const data={stations,alarms,playlists};const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='ganesh-sangeet-v8-backup.json';a.click();URL.revokeObjectURL(a.href)};
+$('#importData').onclick=()=>$('#backupFile').click();
+$('#backupFile').onchange=async e=>{try{const d=JSON.parse(await e.target.files[0].text());if(Array.isArray(d.stations))stations=d.stations;if(Array.isArray(d.alarms))alarms=d.alarms;if(Array.isArray(d.playlists))playlists=d.playlists;save('stations',stations);save('alarms',alarms);save('playlists',playlists);renderRadios();renderAlarms();renderPlaylists();toast('Backup Restore भयो')}catch{toast('Backup फाइल पढ्न सकिएन')}};
+renderTracks();renderVideos();renderRadios();renderAlarms();renderPlaylists();setupEQ();
+window.addEventListener('beforeunload',()=>{tracks.forEach(t=>URL.revokeObjectURL(t.url));videos.forEach(v=>URL.revokeObjectURL(v.url))});
+})();
+</script></body></html>
