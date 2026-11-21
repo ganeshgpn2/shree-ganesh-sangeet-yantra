@@ -1,5 +1,4 @@
-
-name: Build Shree Ganesh Android APK
+name: Build Shree Ganesh V9 APK
 
 on:
   push:
@@ -8,46 +7,37 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
+      - name: Check project.zip
+        run: |
+          if [ ! -f project.zip ]; then
+            echo "ERROR: project.zip is missing. Upload project.zip to the repository."
+            exit 1
+          fi
 
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 21
+          java-version: 17
 
-      - name: Create Capacitor project
-        run: |
-          npm init -y
-          npm install @capacitor/core@7 @capacitor/cli@7 @capacitor/android@7
-          mkdir -p www
-          cp Shree_Ganesh_Sangeet_Yantra_V8.html www/index.html
-          cat > capacitor.config.json <<'EOF'
-          {
-            "appId": "com.shreeganesh.sangeet",
-            "appName": "Shree Ganesh Sangeet Yantra",
-            "webDir": "www"
-          }
-          EOF
-          npx cap add android
-          npx cap sync android
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: 8.9
 
-      - name: Build APK
-        run: |
-          cd android
-          chmod +x gradlew
-          ./gradlew assembleDebug
+      - name: Unzip project
+        run: unzip -q project.zip -d src_build
+
+      - name: Build debug APK
+        working-directory: src_build
+        run: gradle assembleDebug --stacktrace
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Shree-Ganesh-Sangeet-Yantra-APK
-          path: android/app/build/outputs/apk/debug/app-debug.apk
+          name: Shree-Ganesh-V9-debug-APK
+          path: src_build/app/build/outputs/apk/debug/*.apk
